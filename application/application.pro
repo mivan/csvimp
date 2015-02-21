@@ -1,7 +1,7 @@
 #
 # This file is part of the xTuple ERP: PostBooks Edition, a free and
 # open source Enterprise Resource Planning software suite,
-# Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
+# Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
 # It is licensed to you under the Common Public Attribution License
 # version 1.0, the full text of which (including xTuple-specific Exhibits)
 # is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -10,6 +10,13 @@
 
 TEMPLATE = app
 CONFIG += qt warn_on release
+
+HARDCODE_APPLICATION_DIR = $$(HARDCODE_APPLICATION_DIR)
+! isEmpty( HARDCODE_APPLICATION_DIR ) {
+  # Note the way we wrap the variable with '"  "' to ensure it is
+  # properly quoted for C/C++ syntax
+  QMAKE_CXXFLAGS += -DHARDCODE_APPLICATION_DIR=\'\"$(HARDCODE_APPLICATION_DIR)\"\'
+}
 
 include(../global.pri)
 
@@ -20,23 +27,24 @@ MOC_DIR     = tmp
 UI_DIR      = tmp
 
 INCLUDEPATH += ../csvimpcommon ../csvimpcommon/images ../plugin \
-               ../$${OPENRPT_DIR}/common ../$${OPENRPT_DIR}/MetaSQL \
-               ../$${OPENRPT_BLD}/common ../$${OPENRPT_BLD}/MetaSQL
+               $${OPENRPT_DIR}/common $${OPENRPT_DIR}/MetaSQL \
+               $${OPENRPT_BLD}/common $${OPENRPT_BLD}/MetaSQL
 INCLUDEPATH = $$unique(INCLUDEPATH)
 
 win32:INCLUDEPATH += .
 DEPENDPATH  += $${INCLUDEPATH}
 
-LIBS += -L../$${OPENRPT_BLD}/lib -lcommon -lMetaSQL
+QMAKE_LIBDIR = $${OPENRPT_LIBDIR} $$QMAKE_LIBDIR
+LIBS += -lopenrptcommon -lMetaSQL
 
 win32-msvc* {
-  PRE_TARGETDEPS += ../$${OPENRPT_BLD}/lib/common.lib      \
-                    ../$${OPENRPT_BLD}/lib/MetaSQL.lib     \
-
+  PRE_TARGETDEPS += $${OPENRPT_LIBDIR}/openrptcommon.$${LIBEXT} \
+                    $${OPENRPT_LIBDIR}/MetaSQL.$${LIBEXT}
 } else {
-  PRE_TARGETDEPS += ../$${OPENRPT_BLD}/lib/libcommon.a      \
-                    ../$${OPENRPT_BLD}/lib/libMetaSQL.a     \
+  PRE_TARGETDEPS += $${OPENRPT_LIBDIR}/libopenrptcommon.$${LIBEXT} \
+                    $${OPENRPT_LIBDIR}/libMetaSQL.$${LIBEXT}
 }
+
 win32:RC_FILE = application.rc
 
 macx {

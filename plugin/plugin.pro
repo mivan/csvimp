@@ -1,7 +1,7 @@
 #
 # This file is part of the xTuple ERP: PostBooks Edition, a free and
 # open source Enterprise Resource Planning software suite,
-# Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
+# Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
 # It is licensed to you under the Common Public Attribution License
 # version 1.0, the full text of which (including xTuple-specific Exhibits)
 # is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -30,18 +30,19 @@ MOC_DIR     = tmp
 UI_DIR      = tmp
 
 INCLUDEPATH += ../csvimpcommon ../csvimpcommon/images \
-               ../$${OPENRPT_DIR}/common ../$${OPENRPT_DIR}/MetaSQL
+               $${OPENRPT_DIR}/common $${OPENRPT_DIR}/MetaSQL
 win32:INCLUDEPATH += .
 DEPENDPATH  += $${INCLUDEPATH}
-LIBS += -L../$${OPENRPT_BLD}/lib -lcommon -lMetaSQL
+
+QMAKE_LIBDIR = $${OPENRPT_LIBDIR} $$QMAKE_LIBDIR
+LIBS += -lopenrptcommon -lMetaSQL
 
 win32-msvc* {
-  PRE_TARGETDEPS += ../$${OPENRPT_BLD}/lib/common.lib   \
-                    ../$${OPENRPT_BLD}/lib/MetaSQL.lib  \
-
+  PRE_TARGETDEPS += $${OPENRPT_LIBDIR}/openrptcommon.$${LIBEXT} \
+                    $${OPENRPT_LIBDIR}/MetaSQL.$${LIBEXT}
 } else {
-  PRE_TARGETDEPS += ../$${OPENRPT_BLD}/lib/libcommon.a  \
-                    ../$${OPENRPT_BLD}/lib/libMetaSQL.a \
+  PRE_TARGETDEPS += $${OPENRPT_LIBDIR}/libopenrptcommon.$${LIBEXT} \
+                    $${OPENRPT_LIBDIR}/libMetaSQL.$${LIBEXT}
 }
 
 FORMS    = csvaddmapinputdialog.ui \
